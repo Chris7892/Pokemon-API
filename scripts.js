@@ -5,7 +5,7 @@ const evoChainCache = new Map();
 
 
 
-async function loadPokemonCards(count = 30) {
+async function loadPokemonCards(count = 15) {
     const ids = Array.from({ length: count }, (_, i) => i + 1);
     const pokemonList = await Promise.all(ids.map(id => getPokemon(id)));
     renderCards(pokemonList);
@@ -65,7 +65,97 @@ async function getEvolutionChain(url) {
 }
 
 function renderEvolutionChain(evoData) {
-    // evoData.chain enthält eine verschachtelte Struktur:
-    // { species: {...}, evolves_to: [ { species: {...}, evolves_to: [...] } ] }
-    console.log(evoData.chain); // erstmal zum Testen, dann eigenes Markup bauen
+    const container = document.querySelector('.evolution-chain');
+    container.innerHTML = buildChainHTML(evoData.chain);
+    attachEvolutionListeners();
 }
+
+function attachEvolutionListeners() {
+    document.querySelectorAll('.evo-stage').forEach(stage => {
+        stage.addEventListener('dblclick', () => {
+            showPokemonDetailModal(stage.dataset.id);
+        });
+    });
+}
+
+function buildChainHTML(chainLink) {
+    const name = chainLink.species.name;
+    const id = chainLink.species.url.match(/\/(\d+)\/?$/)[1];
+    const stageHTML = `<span class="evo-stage" data-id="${id}">${name}</span>`;
+
+    if (chainLink.evolves_to.length === 0) {
+        // Endpunkt erreicht, keine weiteren Entwicklungen
+        return stageHTML;
+    }
+
+    // Für jede mögliche nächste Entwicklung rekursiv weiterbauen
+    const nextStages = chainLink.evolves_to
+        .map(next => buildChainHTML(next))
+        .join('');
+
+    return `${stageHTML} <span class="evo-arrow">→</span> ${nextStages}`;
+
+
+}
+
+async function showPokemonDetailModal(id) {
+    const pokemon = await getPokemon(id);
+    const overlay = document.getElementById('pokemon-modal');
+    overlay.querySelector('.modal-body').innerHTML = buildDetailHTML(pokemon);
+    overlay.classList.add('open');
+}
+
+function buildDetailHTML(pokemon) {
+    const typeBadges = pokemon.types
+        .map(t => `<span class="type-badge type-${t.type.name}">${t.type.name}</span>`)
+        .join('');
+
+    const abilities = pokemon.abilities
+        .map(a => a.ability.name)
+        .join(', ');
+
+    const heightM = (pokemon.height / 10).toFixed(1);
+    const weightKg = (pokemon.weight / 10).toFixed(1);
+
+    const statRows = pokemon.stats.map(s => {
+        const pct = Math.min(100, (s.base_stat / 200) * 100);
+        return `
+            <div class="modal-stat-row">
+                <span class="modal-stat-name">${s.stat.name}</span>
+                <span class="modal-stat-bar"><span class="modal-stat-bar-fill" style="width:${pct}%"></span></span>
+                <span class="modal-stat-value">${s.base_stat}</span>
+            </div>
+        `;
+    }).join('');
+
+    return `
+        <img src="${pokemon.sprites.front_default}" alt="${pokemon.name}">
+        <h2>${pokemon.name} #${String(pokemon.id).padStart(3, '0')}</h2>
+        <div class="type-list">${typeBadges}</div>
+        <div class="modal-info-row">
+            <span>Größe: ${heightM} m</span>
+            <span>Gewicht: ${weightKg} kg</span>
+        </div>
+        <div class="modal-info-row">
+            <span>Fähigkeiten: ${abilities}</span>
+        </div>
+        <div class="modal-stats">${statRows}</div>
+    `;
+}
+
+function closeModal() {
+    document.getElementById('pokemon-modal').classList.remove('open');
+}
+
+function initModal() {
+    const overlay = document.getElementById('pokemon-modal');
+    overlay.querySelector('.modal-close').addEventListener('click', closeModal);
+    overlay.addEventListener('click', (event) => {
+        if (event.target === overlay) closeModal();
+    });
+    document.addEventListener('keydown', (event) => {
+        if (event.key === 'Escape') closeModal();
+    });
+}
+
+document.addEventListener('DOMContentLoaded', initModal);
