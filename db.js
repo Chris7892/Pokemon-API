@@ -1,6 +1,6 @@
 function onloadFunc() {
     console.log("Page loaded");
-    loadPokemonCards(30);
+    loadPokemonCards(15);
 }
 
 const BASE_URL = 'https://pokeapi.co/api/v2/pokemon';

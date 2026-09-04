@@ -15,14 +15,20 @@
 <body onload="onloadFunc()">
     <header>
          <h1>POKEDEX</h1>
-        <p>Welcome to the POKEDEX!</p>
+        <input type="text" id="search-input" placeholder="Pokémon suchen..." oninput="filterandShowNames(this.value)">
     </header>
 
     <div class="card-container"></div>
-    <div class="evolution-chain"></div>
+
+    <div class="load-more-container">
+        <button id="load-more-btn" onclick="loadMorePokemon()">Mehr laden</button>
+        <div id="load-more-loading" class="loading-spinner" hidden></div>
+    </div>
 
     <div id="pokemon-modal" class="modal-overlay">
         <div class="modal-box">
+            <button class="modal-nav modal-nav-prev" aria-label="Vorheriges Pokémon">&#10094;</button>
+            <button class="modal-nav modal-nav-next" aria-label="Nächstes Pokémon">&#10095;</button>
             <button class="modal-close" aria-label="Schließen">&times;</button>
             <div class="modal-body"></div>
         </div>
@@ -30,5 +36,6 @@
 
     <footer>
         <p>&copy; 2024 POKEDEX. All rights reserved.</p>
+    </footer>
 </body>
 </html>
