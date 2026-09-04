@@ -137,10 +137,30 @@ header {
     background: #f2f2f2;
     border-radius: 16px;
     padding: 2rem;
+    margin: 1rem;
     width: min(600px, 90vw);
     max-height: 85vh;
     overflow-y: auto;
 }
+
+.modal-box.type-fire { background-color: #f08030; }
+.modal-box.type-water { background-color: #6890f0; }
+.modal-box.type-grass { background-color: #78c850; }
+.modal-box.type-electric { background-color: #f8d030; }
+.modal-box.type-normal { background-color: #a8a878; }
+.modal-box.type-poison { background-color: #a040a0; }
+.modal-box.type-flying { background-color: #a890f0; }
+.modal-box.type-bug { background-color: #a8b820; }
+.modal-box.type-ground { background-color: #e0c068; }
+.modal-box.type-rock { background-color: #b8a038; }
+.modal-box.type-psychic { background-color: #f85888; }
+.modal-box.type-ice { background-color: #98d8d8; }
+.modal-box.type-dragon { background-color: #7038f8; }
+.modal-box.type-ghost { background-color: #705898; }
+.modal-box.type-dark { background-color: #705848; }
+.modal-box.type-steel { background-color: #b8b8d0; }
+.modal-box.type-fairy { background-color: #ee99ac; }
+.modal-box.type-fighting { background-color: #c03028; }
 
 .modal-close {
     position: absolute;
@@ -211,6 +231,7 @@ header {
 }
 
 .modal-stat-bar-fill {
+    display: block;
     height: 100%;
     background: #e40c0c;
 }

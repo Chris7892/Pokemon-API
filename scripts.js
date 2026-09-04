@@ -33,6 +33,7 @@ function attachCardListeners() {
     document.querySelectorAll('.pokemon-card').forEach(card => {
         card.addEventListener('click', () => {
             const id = card.dataset.id;
+            showPokemonDetailModal(id);
             showEvolutionChain(id);
         });
     });
@@ -101,6 +102,8 @@ function buildChainHTML(chainLink) {
 async function showPokemonDetailModal(id) {
     const pokemon = await getPokemon(id);
     const overlay = document.getElementById('pokemon-modal');
+    const primaryType = pokemon.types[0].type.name;
+    overlay.querySelector('.modal-box').className = `modal-box type-${primaryType}`;
     overlay.querySelector('.modal-body').innerHTML = buildDetailHTML(pokemon);
     overlay.classList.add('open');
 }
