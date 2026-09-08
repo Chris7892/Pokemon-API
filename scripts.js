@@ -76,9 +76,11 @@ async function getPokemon(id) {
 
 function attachCardListeners(cards) {
     cards.forEach(card => {
-        card.addEventListener('click', () => {
-            const id = card.dataset.id;
-            showPokemonDetailModal(id);
+        card.addEventListener('click', () => showPokemonDetailModal(card.dataset.id));
+        card.addEventListener('keydown', (event) => {
+            if (event.key !== 'Enter' && event.key !== ' ') return;
+            event.preventDefault();
+            showPokemonDetailModal(card.dataset.id);
         });
     });
 }

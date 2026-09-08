@@ -6,7 +6,7 @@ function createCardHTML(pokemon) {
         .join('');
     const primaryType = pokemon.types[0].type.name;
     return `
-        <div class="pokemon-card type-${primaryType}" data-id="${pokemon.id}" data-name="${pokemon.name}">
+        <div class="pokemon-card type-${primaryType}" data-id="${pokemon.id}" data-name="${pokemon.name}" role="button" tabindex="0" aria-label="${pokemon.name} Details anzeigen">
             <img src="${pokemon.sprites.front_default}" alt="${pokemon.name}">
             <h3>${pokemon.name}</h3>
             <div class="type-list">${typeBadges}</div>

@@ -1,7 +1,7 @@
 
 html {
     scrollbar-color: #fc0707 #110101;
-    scrollbar-width: thin;
+    overflow-x: hidden;
 }
 
 ::-webkit-scrollbar {
@@ -91,6 +91,11 @@ h1 {
 .pokemon-card:hover {
     transform: translateY(-4px);
     box-shadow: 0 6px 14px rgba(0, 0, 0, 0.15);
+}
+
+.pokemon-card:focus-visible {
+    outline: 3px solid #fc0707;
+    outline-offset: 2px;
 }
 
 .pokemon-card img:hover {
