@@ -67,10 +67,15 @@ async function getPokemon(id) {
     if (pokemonCache.has(id)) {
         return pokemonCache.get(id);
     }
-    const response = await fetch(`https://pokeapi.co/api/v2/pokemon/${id}`);
-    const data = await response.json();
-    pokemonCache.set(id, data);
-    return data;
+    try {
+        const response = await fetch(`https://pokeapi.co/api/v2/pokemon/${id}`);
+        const data = await response.json();
+        pokemonCache.set(id, data);
+        return data;
+    } catch (error) {
+        console.error(`Fehler beim Abrufen von Pokémon mit ID ${id}:`, error);
+        throw error;
+    }
 }
 
 function attachCardListeners(cards) {
@@ -98,11 +103,14 @@ async function showPokemonDetailModal(id) {
     currentModalId = pokemon.id;
     const overlay = document.getElementById('pokemon-modal');
     const primaryType = pokemon.types[0].type.name;
-    const heightM = (pokemon.height / 10).toFixed(1);
-    const weightKg = (pokemon.weight / 10).toFixed(1);
-    const abilities = pokemon.abilities.map(a => a.ability.name).join(', ');
-    const statsWithPercent = pokemon.stats.map(stat => ({ stat, pct: Math.min(100, (stat.base_stat / 200) * 100) }));
     overlay.querySelector('.modal-box').className = `modal-box type-${primaryType}`;
+    const heightM = pokemon.height / 10;
+    const weightKg = pokemon.weight / 10;
+    const abilities = pokemon.abilities.map(a => a.ability.name).join(', ');
+    const statsWithPercent = pokemon.stats.map(stat => ({
+        stat,
+        pct: Math.min(100, Math.round((stat.base_stat / 255) * 100))
+    }));
     overlay.querySelector('.modal-body').innerHTML = buildDetailHTML(pokemon, heightM, weightKg, abilities, statsWithPercent);
     const visibleIds = getVisiblePokemonIds();
     const index = visibleIds.indexOf(currentModalId);
