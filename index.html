@@ -16,6 +16,7 @@
     <header>
          <h1>POKEDEX</h1>
         <input type="text" id="search-input" placeholder="Pokémon suchen..." oninput="filterandShowNames(this.value)">
+        <span id="search-hint" class="search-hint" hidden>Bitte mind. 3 Zeichen eingeben</span>
     </header>
 
     <div class="card-container"></div>
@@ -26,12 +27,12 @@
     </div>
 
     <div id="pokemon-modal" class="modal-overlay">
-        <div class="modal-box">
+        <dialog class="modal-box">
             <button class="modal-nav modal-nav-prev" aria-label="Vorheriges Pokémon">&#10094;</button>
             <button class="modal-nav modal-nav-next" aria-label="Nächstes Pokémon">&#10095;</button>
             <button class="modal-close" aria-label="Schließen">&times;</button>
             <div class="modal-body"></div>
-        </div>
+        </dialog>
     </div>
 
     <footer>

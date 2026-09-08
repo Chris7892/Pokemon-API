@@ -1,9 +1,5 @@
-
-
 function createCardHTML(pokemon) {
-    const typeBadges = pokemon.types
-        .map(t => `<span class="type-badge type-${t.type.name}">${t.type.name}</span>`)
-        .join('');
+    const typeBadges = buildTypeBadgesHTML(pokemon.types);
     const primaryType = pokemon.types[0].type.name;
     return `
         <div class="pokemon-card type-${primaryType}" data-id="${pokemon.id}" data-name="${pokemon.name}" role="button" tabindex="0" aria-label="${pokemon.name} Details anzeigen">
@@ -14,27 +10,13 @@ function createCardHTML(pokemon) {
     `;
 }
 
-function buildChainHTML(chainLink) {
-    const name = chainLink.species.name;
-    const id = chainLink.species.url.match(/\/(\d+)\/?$/)[1];
-    const stageHTML = `<span class="evo-stage" data-id="${id}">${name}</span>`;
-
-    if (chainLink.evolves_to.length === 0) {
-        return stageHTML;
-    }
-
-    const nextStages = chainLink.evolves_to.map(buildChainHTML).join('');
-    return `${stageHTML} <span class="evo-arrow">→</span> ${nextStages}`;
-}
-
 function buildTypeBadgesHTML(types) {
     return types
         .map(t => `<span class="type-badge type-${t.type.name}">${t.type.name}</span>`)
         .join('');
 }
 
-function buildStatRowHTML(stat) {
-    const pct = Math.min(100, (stat.base_stat / 200) * 100);
+function buildStatRowHTML(stat, pct) {
     return `
         <div class="modal-stat-row">
             <span class="modal-stat-name">${stat.stat.name}</span>
@@ -56,12 +38,9 @@ function buildInfoRowsHTML(heightM, weightKg, abilities) {
     `;
 }
 
-function buildDetailHTML(pokemon) {
+function buildDetailHTML(pokemon, heightM, weightKg, abilities, statsWithPercent) {
     const typeBadges = buildTypeBadgesHTML(pokemon.types);
-    const abilities = pokemon.abilities.map(a => a.ability.name).join(', ');
-    const heightM = (pokemon.height / 10).toFixed(1);
-    const weightKg = (pokemon.weight / 10).toFixed(1);
-    const statRows = pokemon.stats.map(buildStatRowHTML).join('');
+    const statRows = statsWithPercent.map(({ stat, pct }) => buildStatRowHTML(stat, pct)).join('');
     return `
         <img src="${pokemon.sprites.front_default}" alt="${pokemon.name}">
         <h2>${pokemon.name} #${String(pokemon.id).padStart(3, '0')}</h2>

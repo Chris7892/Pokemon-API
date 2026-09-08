@@ -1,7 +1,5 @@
 
 const pokemonCache = new Map();
-const speciesCache = new Map();
-const evoChainCache = new Map();
 let allNames = [];
 let currentModalId = null;
 let loadedCount = 0;
@@ -65,6 +63,7 @@ async function loadMorePokemon() {
 
 
 async function getPokemon(id) {
+    id = Number(id);
     if (pokemonCache.has(id)) {
         return pokemonCache.get(id);
     }
@@ -88,40 +87,54 @@ function attachCardListeners(cards) {
 
 
 
-async function getSpecies(id) {
-    if (speciesCache.has(id)) return speciesCache.get(id);
-    const response = await fetch(`https://pokeapi.co/api/v2/pokemon-species/${id}`);
-    const data = await response.json();
-    speciesCache.set(id, data);
-    return data;
+function getVisiblePokemonIds() {
+    return Array.from(document.querySelectorAll('.pokemon-card'))
+        .filter(card => card.style.display !== 'none')
+        .map(card => Number(card.dataset.id));
 }
-
-
 
 async function showPokemonDetailModal(id) {
     const pokemon = await getPokemon(id);
     currentModalId = pokemon.id;
     const overlay = document.getElementById('pokemon-modal');
     const primaryType = pokemon.types[0].type.name;
+    const heightM = (pokemon.height / 10).toFixed(1);
+    const weightKg = (pokemon.weight / 10).toFixed(1);
+    const abilities = pokemon.abilities.map(a => a.ability.name).join(', ');
+    const statsWithPercent = pokemon.stats.map(stat => ({ stat, pct: Math.min(100, (stat.base_stat / 200) * 100) }));
     overlay.querySelector('.modal-box').className = `modal-box type-${primaryType}`;
-    overlay.querySelector('.modal-body').innerHTML = buildDetailHTML(pokemon);
-    overlay.querySelector('.modal-nav-prev').disabled = currentModalId <= 1;
+    overlay.querySelector('.modal-body').innerHTML = buildDetailHTML(pokemon, heightM, weightKg, abilities, statsWithPercent);
+    const visibleIds = getVisiblePokemonIds();
+    const index = visibleIds.indexOf(currentModalId);
+    overlay.querySelector('.modal-nav-prev').disabled = index <= 0;
+    overlay.querySelector('.modal-nav-next').disabled = index === -1 || index >= visibleIds.length - 1;
+    overlay.querySelector('.modal-box').setAttribute('open', '');
     overlay.classList.add('open');
+    document.documentElement.classList.add('modal-open');
     document.body.classList.add('modal-open');
 }
 
 function showPreviousPokemon() {
-    if (currentModalId === null || currentModalId <= 1) return;
-    showPokemonDetailModal(currentModalId - 1);
+    if (currentModalId === null) return;
+    const visibleIds = getVisiblePokemonIds();
+    const index = visibleIds.indexOf(currentModalId);
+    if (index <= 0) return;
+    showPokemonDetailModal(visibleIds[index - 1]);
 }
 
 function showNextPokemon() {
     if (currentModalId === null) return;
-    showPokemonDetailModal(currentModalId + 1);
+    const visibleIds = getVisiblePokemonIds();
+    const index = visibleIds.indexOf(currentModalId);
+    if (index === -1 || index >= visibleIds.length - 1) return;
+    showPokemonDetailModal(visibleIds[index + 1]);
 }
 
 function closeModal() {
-    document.getElementById('pokemon-modal').classList.remove('open');
+    const overlay = document.getElementById('pokemon-modal');
+    overlay.querySelector('.modal-box').removeAttribute('open');
+    overlay.classList.remove('open');
+    document.documentElement.classList.remove('modal-open');
     document.body.classList.remove('modal-open');
 }
 
@@ -143,12 +156,18 @@ function initModal() {
     document.addEventListener('keydown', (event) => handleModalKeydown(event, overlay));
 }
 
+const MIN_SEARCH_LENGTH = 3;
+
 function filterandShowNames(filterword) {
     const search = filterword.toLowerCase();
+    const hint = document.getElementById('search-hint');
+    const isSearchActive = search.length >= MIN_SEARCH_LENGTH;
+    hint.hidden = search.length === 0 || isSearchActive;
+    document.querySelector('.load-more-container').hidden = isSearchActive;
     allNames.forEach(name => {
         const card = document.querySelector(`.pokemon-card[data-name="${name}"]`);
         if (!card) return;
-        card.style.display = name.includes(search) ? '' : 'none';
+        card.style.display = (!isSearchActive || name.includes(search)) ? '' : 'none';
     });
 }
 

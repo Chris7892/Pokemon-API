@@ -34,6 +34,7 @@ html {
     width: 100%;
 }
 
+html.modal-open,
 body.modal-open {
     overflow: hidden;
 }
@@ -58,6 +59,12 @@ header {
 h1 {
     margin: 20px;
     font-size: 3rem;
+}
+
+.search-hint {
+    font-size: 0.75rem;
+    color: #ffd9d9;
+    margin-top: 4px;
 }
 
 .card-container {
@@ -189,27 +196,6 @@ h1 {
 .pokemon-card.type-fighting { background-color: var(--type-fighting); }
 
 
-
-.evolution-chain {
-    display: flex;
-    align-items: center;
-    flex-wrap: wrap;
-    gap: 0.5rem;
-    padding: 1rem;
-}
-
-.evo-stage {
-    text-transform: capitalize;
-    font-weight: bold;
-    background: #eee;
-    padding: 4px 10px;
-    border-radius: 8px;
-    cursor: pointer;
-}
-
-.evo-arrow {
-    color: #888;
-}
 
 .modal-overlay {
     display: none;
@@ -357,6 +343,10 @@ h1 {
 .modal-stat-value {
     width: 30px;
     text-align: right;
+}
+
+.load-more-container[hidden] {
+    display: none;
 }
 
 .load-more-container {
