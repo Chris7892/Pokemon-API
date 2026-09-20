@@ -1,11 +1,10 @@
+const BASE_URL = 'https://pokeapi.co/api/v2/pokemon';
 
 const pokemonCache = new Map();
 let allNames = [];
 let currentModalId = null;
 let loadedCount = 0;
 let isLoadingMore = false;
-
-
 
 async function loadPokemonCards(count = 15) {
     const ids = Array.from({ length: count }, (_, i) => i + 1);
@@ -98,28 +97,32 @@ function getVisiblePokemonIds() {
         .map(card => Number(card.dataset.id));
 }
 
-async function showPokemonDetailModal(id) {
-    const pokemon = await getPokemon(id);
-    currentModalId = pokemon.id;
-    const overlay = document.getElementById('pokemon-modal');
-    const primaryType = pokemon.types[0].type.name;
-    overlay.querySelector('.modal-box').className = `modal-box type-${primaryType}`;
-    const heightM = pokemon.height / 10;
-    const weightKg = pokemon.weight / 10;
-    const abilities = pokemon.abilities.map(a => a.ability.name).join(', ');
-    const statsWithPercent = pokemon.stats.map(stat => ({
+function buildStatsWithPercent(pokemon) {
+    return pokemon.stats.map(stat => ({
         stat,
         pct: Math.min(100, Math.round((stat.base_stat / 255) * 100))
     }));
-    overlay.querySelector('.modal-body').innerHTML = buildDetailHTML(pokemon, heightM, weightKg, abilities, statsWithPercent);
+}
+
+function updateModalNavButtons(dialog) {
     const visibleIds = getVisiblePokemonIds();
     const index = visibleIds.indexOf(currentModalId);
-    overlay.querySelector('.modal-nav-prev').disabled = index <= 0;
-    overlay.querySelector('.modal-nav-next').disabled = index === -1 || index >= visibleIds.length - 1;
-    overlay.querySelector('.modal-box').setAttribute('open', '');
-    overlay.classList.add('open');
-    document.documentElement.classList.add('modal-open');
-    document.body.classList.add('modal-open');
+    dialog.querySelector('.modal-nav-prev').disabled = index <= 0;
+    dialog.querySelector('.modal-nav-next').disabled = index === -1 || index >= visibleIds.length - 1;
+}
+
+async function showPokemonDetailModal(id) {
+    const pokemon = await getPokemon(id);
+    currentModalId = pokemon.id;
+    const dialog = document.getElementById('pokemon-modal');
+    dialog.className = `modal-box type-${pokemon.types[0].type.name}`;
+    const heightM = pokemon.height / 10;
+    const weightKg = pokemon.weight / 10;
+    const abilities = pokemon.abilities.map(a => a.ability.name).join(', ');
+    const statsWithPercent = buildStatsWithPercent(pokemon);
+    dialog.querySelector('.modal-body').innerHTML = buildDetailHTML(pokemon, heightM, weightKg, abilities, statsWithPercent);
+    updateModalNavButtons(dialog);
+    if (!dialog.open) dialog.showModal();
 }
 
 function showPreviousPokemon() {
@@ -139,29 +142,30 @@ function showNextPokemon() {
 }
 
 function closeModal() {
-    const overlay = document.getElementById('pokemon-modal');
-    overlay.querySelector('.modal-box').removeAttribute('open');
-    overlay.classList.remove('open');
-    document.documentElement.classList.remove('modal-open');
-    document.body.classList.remove('modal-open');
+    const dialog = document.getElementById('pokemon-modal');
+    if (dialog.open) dialog.close();
 }
 
-function handleModalKeydown(event, overlay) {
-    if (event.key === 'Escape') closeModal();
-    if (!overlay.classList.contains('open')) return;
+function handleModalBackdropClick(event, dialog) {
+    const rect = dialog.getBoundingClientRect();
+    const clickedOutside = event.clientX < rect.left || event.clientX > rect.right
+        || event.clientY < rect.top || event.clientY > rect.bottom;
+    if (clickedOutside) closeModal();
+}
+
+function handleModalArrowKeys(event) {
     if (event.key === 'ArrowLeft') showPreviousPokemon();
     if (event.key === 'ArrowRight') showNextPokemon();
 }
 
 function initModal() {
-    const overlay = document.getElementById('pokemon-modal');
-    overlay.querySelector('.modal-close').addEventListener('click', closeModal);
-    overlay.querySelector('.modal-nav-prev').addEventListener('click', showPreviousPokemon);
-    overlay.querySelector('.modal-nav-next').addEventListener('click', showNextPokemon);
-    overlay.addEventListener('click', (event) => {
-        if (event.target === overlay) closeModal();
-    });
-    document.addEventListener('keydown', (event) => handleModalKeydown(event, overlay));
+    const dialog = document.getElementById('pokemon-modal');
+    dialog.querySelector('.modal-close').addEventListener('click', closeModal);
+    dialog.querySelector('.modal-nav-prev').addEventListener('click', showPreviousPokemon);
+    dialog.querySelector('.modal-nav-next').addEventListener('click', showNextPokemon);
+    dialog.addEventListener('click', (event) => handleModalBackdropClick(event, dialog));
+    dialog.addEventListener('keydown', handleModalArrowKeys);
+    dialog.addEventListener('close', () => { currentModalId = null; });
 }
 
 const MIN_SEARCH_LENGTH = 3;
@@ -179,4 +183,5 @@ function filterandShowNames(filterword) {
     });
 }
 
-document.addEventListener('DOMContentLoaded', initModal);
+loadPokemonCards(15);
+initModal();

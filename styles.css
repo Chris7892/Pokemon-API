@@ -34,8 +34,7 @@ html {
     width: 100%;
 }
 
-html.modal-open,
-body.modal-open {
+body:has(dialog[open]) {
     overflow: hidden;
 }
 
@@ -206,29 +205,20 @@ h1 {
 
 
 
-.modal-overlay {
-    display: none;
-    position: fixed;
-    inset: 0;
-    background: rgba(0, 0, 0, 0.7);
-    align-items: center;
-    justify-content: center;
-    z-index: 1000;
-}
-
-.modal-overlay.open {
-    display: flex;
-}
-
 .modal-box {
     position: relative;
     background: #f2f2f2;
+    border: none;
     border-radius: 16px;
     padding: 2rem;
-    margin: 1rem;
+    margin: auto;
     width: min(600px, 90vw);
     max-height: 85vh;
     overflow-y: auto;
+}
+
+.modal-box::backdrop {
+    background: rgba(0, 0, 0, 0.7);
 }
 
 .modal-box.type-fire { background-color: var(--type-fire); }
@@ -434,7 +424,7 @@ footer {
     .modal-box {
         width: 95vw;
         padding: 1.25rem;
-        margin: 0.5rem;
+        margin: auto;
     }
 
     .modal-nav {

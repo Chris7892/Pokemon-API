@@ -6,13 +6,12 @@
     <title>POKEDEX</title>
     <link rel="icon" href="./icons/favicon.png" type="image/x-icon">
      <link rel="stylesheet" href="styles.css">
-    <script src="template.js"></script>
-    <script src="db.js"></script>
-    <script src="scripts.js"></script>
+    <script src="template.js" defer></script>
+    <script src="scripts.js" defer></script>
    
 
 </head>
-<body onload="onloadFunc()">
+<body>
     <header>
          <h1>POKEDEX</h1>
         <input type="text" id="search-input" placeholder="Pokémon suchen..." oninput="filterandShowNames(this.value)">
@@ -26,14 +25,12 @@
         <div id="load-more-loading" class="loading-spinner" hidden></div>
     </div>
 
-    <div id="pokemon-modal" class="modal-overlay">
-        <dialog class="modal-box">
-            <button class="modal-nav modal-nav-prev" aria-label="Vorheriges Pokémon">&#10094;</button>
-            <button class="modal-nav modal-nav-next" aria-label="Nächstes Pokémon">&#10095;</button>
-            <button class="modal-close" aria-label="Schließen">&times;</button>
-            <div class="modal-body"></div>
-        </dialog>
-    </div>
+    <dialog id="pokemon-modal" class="modal-box">
+        <button class="modal-nav modal-nav-prev" aria-label="Vorheriges Pokémon">&#10094;</button>
+        <button class="modal-nav modal-nav-next" aria-label="Nächstes Pokémon">&#10095;</button>
+        <button class="modal-close" aria-label="Schließen">&times;</button>
+        <div class="modal-body"></div>
+    </dialog>
 
     <footer>
         <p>&copy; 2024 POKEDEX. All rights reserved.</p>
