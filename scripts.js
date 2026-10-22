@@ -1,4 +1,5 @@
-const BASE_URL = 'https://pokeapi.co/api/v2/pokemon';
+const BASE_URL = 'https://pokeapi.co/api/v2/';
+const MIN_SEARCH_LENGTH = 3;
 
 const pokemonCache = new Map();
 let allNames = [];
@@ -67,7 +68,7 @@ async function getPokemon(id) {
         return pokemonCache.get(id);
     }
     try {
-        const response = await fetch(`https://pokeapi.co/api/v2/pokemon/${id}`);
+        const response = await fetch(`${BASE_URL}pokemon/${id}`);
         const data = await response.json();
         pokemonCache.set(id, data);
         return data;
@@ -168,7 +169,7 @@ function initModal() {
     dialog.addEventListener('close', () => { currentModalId = null; });
 }
 
-const MIN_SEARCH_LENGTH = 3;
+
 
 function filterandShowNames(filterword) {
     const search = filterword.toLowerCase();
