@@ -110,6 +110,14 @@ function updateModalNavButtons(dialog) {
     const index = visibleIds.indexOf(currentModalId);
     dialog.querySelector('.modal-nav-prev').disabled = index <= 0;
     dialog.querySelector('.modal-nav-next').disabled = index === -1 || index >= visibleIds.length - 1;
+    keepFocusInModal(dialog);
+}
+
+function keepFocusInModal(dialog) {
+    const focused = document.activeElement;
+    if (dialog.contains(focused) && !focused.disabled) return;
+    const fallback = dialog.querySelector('.modal-nav:not(:disabled)') || dialog.querySelector('.modal-close');
+    fallback.focus();
 }
 
 async function showPokemonDetailModal(id) {
@@ -122,8 +130,11 @@ async function showPokemonDetailModal(id) {
     const abilities = pokemon.abilities.map(a => a.ability.name).join(', ');
     const statsWithPercent = buildStatsWithPercent(pokemon);
     dialog.querySelector('.modal-body').innerHTML = buildDetailHTML(pokemon, heightM, weightKg, abilities, statsWithPercent);
+    if (!dialog.open) {
+        dialog.showModal();
+        dialog.querySelector('.modal-close').focus();
+    }
     updateModalNavButtons(dialog);
-    if (!dialog.open) dialog.showModal();
 }
 
 function showPreviousPokemon() {
@@ -148,6 +159,7 @@ function closeModal() {
 }
 
 function handleModalBackdropClick(event, dialog) {
+    if (event.target !== dialog) return;
     const rect = dialog.getBoundingClientRect();
     const clickedOutside = event.clientX < rect.left || event.clientX > rect.right
         || event.clientY < rect.top || event.clientY > rect.bottom;
@@ -166,7 +178,13 @@ function initModal() {
     dialog.querySelector('.modal-nav-next').addEventListener('click', showNextPokemon);
     dialog.addEventListener('click', (event) => handleModalBackdropClick(event, dialog));
     dialog.addEventListener('keydown', handleModalArrowKeys);
-    dialog.addEventListener('close', () => { currentModalId = null; });
+    dialog.addEventListener('close', handleModalClose);
+}
+
+function handleModalClose() {
+    const lastCard = document.querySelector(`.pokemon-card[data-id="${currentModalId}"]`);
+    currentModalId = null;
+    if (lastCard) lastCard.focus();
 }
 
 

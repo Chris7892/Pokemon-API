@@ -24,6 +24,7 @@ html {
 
   body {
     min-height: 100vh;
+    margin: 0;
     border: 0;
     outline: none;
     background-color: black;
@@ -215,6 +216,7 @@ h1 {
     width: min(600px, 90vw);
     max-height: 85vh;
     overflow-y: auto;
+    overflow-x: hidden;
 }
 
 .modal-box::backdrop {
@@ -275,6 +277,13 @@ h1 {
 .modal-nav:disabled {
     opacity: 0.3;
     cursor: default;
+}
+
+.modal-close:focus-visible,
+.modal-nav:focus-visible {
+    outline: 3px solid #fc0707;
+    outline-offset: 2px;
+    border-radius: 4px;
 }
 
 .modal-body {
@@ -406,6 +415,22 @@ footer {
     box-sizing: border-box;
 }
 
+
+
+@media (max-width: 750px) {
+    .modal-box {
+        width: 55vw;
+        padding: 1.25rem;
+        margin: auto;
+    }
+
+
+}
+
+
+
+
+
 @media (max-width: 500px) {
     h1 {
         margin: 10px;
@@ -422,7 +447,7 @@ footer {
     }
 
     .modal-box {
-        width: 95vw;
+        width: 55vw;
         padding: 1.25rem;
         margin: auto;
     }
@@ -464,4 +489,14 @@ footer {
         width: 70px;
         font-size: 0.8rem;
     }
-}
+
+    .modal-stat-bar {
+        display: none;
+    }
+
+    .modal-stat-row {
+        justify-content: center;
+        gap: 5px;
+        
+    }
+}   

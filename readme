@@ -1,0 +1,47 @@
+# POKEDEX
+
+Ein Pokédex im Browser, gebaut mit HTML, CSS und Vanilla JavaScript.
+Die Daten kommen von der [PokéAPI](https://pokeapi.co/).
+
+> **Lernprojekt:** Dieses Projekt ist im Rahmen meiner Weiterbildung bei der [Developer Akademie](https://developerakademie.com/) entstanden.
+
+## Funktionen
+
+- **Pokémon-Karten:** Beim Start werden die ersten 15 Pokémon mit Bild, Name und Typ angezeigt
+- **Mehr laden:** Lädt per Button weitere Pokémon nach (mit Ladeanzeige)
+- **Suche:** Filtert die Pokémon nach Namen, ab 3 eingegebenen Zeichen
+- **Detailansicht:** Ein Klick auf eine Karte öffnet ein Fenster mit Größe, Gewicht, Fähigkeiten und Basiswerten
+- **Navigation:** Mit den Pfeilen im Detailfenster springst du zum vorherigen oder nächsten Pokémon
+- **Typ-Farben:** Karten und Badges sind passend zum Pokémon-Typ eingefärbt
+- **Caching:** Schon geladene Pokémon werden zwischengespeichert und nicht noch einmal abgerufen
+
+## Technologien
+
+- HTML5 (`<dialog>` für das Detailfenster)
+- CSS3
+- JavaScript (ES6+, `fetch`, `async/await`)
+- [PokéAPI](https://pokeapi.co/)
+
+## Projektstruktur
+
+| Datei         | Inhalt                                           |
+|---------------|--------------------------------------------------|
+| `index.html`  | Grundgerüst der Seite                            |
+| `styles.css`  | Styling und Typ-Farben                           |
+| `scripts.js`  | Logik: API-Abfragen, Suche, Laden, Detailfenster |
+| `template.js` | HTML-Vorlagen für Karten und Detailansicht       |
+| `icons/`      | Favicon und Icons                                |
+
+## Starten
+
+1. Repository klonen:
+   ```bash
+   git clone <repo-url>
+   ```
+2. `index.html` im Browser öffnen (oder z. B. mit der VS-Code-Erweiterung *Live Server* starten)
+
+Du musst nichts installieren, aber eine Internetverbindung ist nötig, weil die Daten live von der PokéAPI kommen.
+
+## Autor
+
+Christian Barzen – Lernprojekt bei der [Developer Akademie](https://developerakademie.com/)

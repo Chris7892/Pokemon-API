@@ -43,7 +43,7 @@ function buildDetailHTML(pokemon, heightM, weightKg, abilities, statsWithPercent
     const statRows = statsWithPercent.map(({ stat, pct }) => buildStatRowHTML(stat, pct)).join('');
     return `
         <img src="${pokemon.sprites.front_default}" alt="${pokemon.name}">
-        <h2>${pokemon.name} #${String(pokemon.id).padStart(3, '0')}</h2>
+        <h2 id="modal-title">${pokemon.name} #${String(pokemon.id).padStart(3, '0')}</h2>
         <div class="type-list">${typeBadges}</div>
         ${buildInfoRowsHTML(heightM, weightKg, abilities)}
         <div class="modal-stats">${statRows}</div>
